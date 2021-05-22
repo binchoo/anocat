@@ -43,27 +43,61 @@ class CategoryPostDecorator {
     }
 
     firstHeader(width, renderer) {
-        const table = this.reference.getElementsByTagName('table')[0];
+        const {table, thead, tbody} = this.#getContext();
         const tr = document.createElement('tr');
         const th = document.createElement('th');
-        
-        th.classList.add('first-header');
+
         th.setAttribute('colspan', width);
         th.appendChild(renderer(this.posts));
 
         tr.appendChild(th);
-        table?.insertBefore(tr, table?.firstChild);
+        tr.classList.add('first-header');
+
+        thead.appendChild(tr);
+        table?.insertBefore(thead, table?.firstChild);
 
         this.hasHeader = true;
         this.headerWidth = width;
     }
 
     secondHeader(widths, renderer) {
-        if (this.hasHeader == false) return
+        const {table, thead, tbody} = this.#getContext();
+
+        if (!thead) return;
+        if (this.hasHeader == false) return;
+        if (this.headerWidth != widths.reduce((x, y)=> x + y)) return;
+        
+        const tr = document.createElement('tr')
+        tr.classList.add('second-header');
+
+        for (let i = 0; i < widths.length; i++) {
+          const width = widths[i];
+          const th = document.createElement('th');
+          th.appendChild(renderer(this.posts, i));
+          tr.appendChild(th);
+        }
+        thead.appendChild(tr);
+        
     }
 
     #createColumns(widths) {
+        this.#trimReferenceTable(); 
 
+    }
+
+    #trimReferenceTable() {
+      const tbody = this.#getContext().tbody;
+      const rows = tbody.getElementsByTagName('tr');
+      for (let i = 0; i < rows.length; i++)
+        rows[i].remove();
+    }
+
+    #getContext() {
+      return {
+        table: this.reference.getElementsByTagName('table')?.item(0);
+        thead: this.reference.getElementsByTagName('thead')?.item(0) ?? document.createElement('thead');
+        tbody: this.reference.getElementsByTagName('tbody')?.item(0) ?? document.createElement('tbody');
+      }
     }
 
     body(renderer) {
