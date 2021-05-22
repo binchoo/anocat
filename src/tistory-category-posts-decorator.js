@@ -9,7 +9,7 @@ class CategoryPostDecorator {
 
     posts = {};
 
-    enum = {
+    query = {
         SELECT_CATEGORY_A: 'div.another_category>h4>a',
         SELECT_POSTS_A: 'div.another_category th a',
         SELECT_POSTS_DATA_TD: 'div.another_category td'
@@ -26,13 +26,13 @@ class CategoryPostDecorator {
 
     #fetchCategoryPosts() {
 
-        const as = document.querySelectorAll(this.enum.SELECT_CATEGORY_A);
+        const as = document.querySelectorAll(this.query.SELECT_CATEGORY_A);
 
         this.posts.category = Array.prototype.map.call(as, it=>it.textContent).join(' > ');
         this.posts.category_links = Array.prototype.map.call(as, it=>it.href);
 
-        const posts = document.querySelectorAll(this.enum.SELECT_POSTS_A);
-        const dates = document.querySelectorAll(this.enum.SELECT_POSTS_DATA_TD);
+        const posts = document.querySelectorAll(this.query.SELECT_POSTS_A);
+        const dates = document.querySelectorAll(this.query.SELECT_POSTS_DATA_TD);
 
         if (posts.length == dates.length) {
             var data = [];
