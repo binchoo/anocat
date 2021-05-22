@@ -11,7 +11,7 @@ class CategoryPostDecorator {
         SELECT_CATEGORY_A: 'div.another_category>h4>a',
         SELECT_POSTS_A: 'div.another_category th a',
         SELECT_POSTS_DATA_TD: 'div.another_category td'
-    }
+    };
 
     constructor(reference='div.another_category') {
 
@@ -20,7 +20,7 @@ class CategoryPostDecorator {
         this.#fetchCategoryPosts();
 
         this.#trimReference();
-    }
+    };
 
     #fetchCategoryPosts() {
 
@@ -39,7 +39,7 @@ class CategoryPostDecorator {
                     title: posts[i].textContent,
                     link: posts[i].href,
                     date: dates[i].textContent,
-                })
+                });
             }
             this.posts.data = data;
         }
@@ -79,7 +79,7 @@ class CategoryPostDecorator {
         if (this.headerWidth != widths.reduce((x, y)=> x + y)) 
           return;
         
-        const tr = document.createElement('tr')
+        const tr = document.createElement('tr');
 
         for (let i = 0; i < widths.length; i++) {
           const th = document.createElement('th');
@@ -110,7 +110,7 @@ class CategoryPostDecorator {
         table: this.reference.getElementsByTagName('table')?.item(0),
         thead: this.reference.getElementsByTagName('thead')?.item(0) ?? document.createElement('thead'),
         tbody: this.reference.getElementsByTagName('tbody')?.item(0) ?? document.createElement('tbody')
-      }
+      };
     }
 
     body(renderer) {
