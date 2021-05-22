@@ -4,6 +4,8 @@ class CategoryPostDecorator {
     reference;
 
     headerWidth = 0;
+    
+    columnCount = 0;
 
     posts = {};
 
@@ -87,6 +89,8 @@ class CategoryPostDecorator {
           th.appendChild(renderer(this.posts, i));
 
           tr.appendChild(th);
+
+          this.columnCount++;
         }
 
         tr.classList.add('second-header');
@@ -94,13 +98,30 @@ class CategoryPostDecorator {
         thead.appendChild(tr);
     }
 
-    #createColumns(widths) {
+    body(renderer) {
 
+      #trimReferenceTableBody();
+      
+      const tbody = this.#getOrCreateContext().tbody;
+      const data = this.posts.data;
+
+      for (let i = 0; i < data.length; i++) {
+        const tr = document.createElement('tr');
+        for (let j = 0; j < this.columnCount; j++) {
+          const th = document.createElement('th');
+          th.appendChild(renderer(this.posts, i, j));
+          tr.appendChild(th);
+        }
+        tbody.appendChild(tr);
+      }
+      tbody.classList.add('table-body');
     }
 
     #trimReferenceTableBody() {
+
       const tbody = this.#getOrCreateContext().tbody;
       const rows = tbody.getElementsByTagName('tr');
+
       for (let i = 0; i < rows.length; i++)
         rows[i].remove();
     }
@@ -113,19 +134,11 @@ class CategoryPostDecorator {
       };
     }
 
-    body(renderer) {
-
-    }
-
     topView(renderer) {
 
     }
 
     bottomView(renderer) {
-
-    }
-
-    commit() {
 
     }
 }
