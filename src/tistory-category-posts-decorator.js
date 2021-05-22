@@ -100,7 +100,7 @@ class CategoryPostDecorator {
 
     body(renderer) {
 
-      #trimReferenceTableBody();
+      this.#trimReferenceTableBody();
       
       const tbody = this.#getOrCreateContext().tbody;
       const data = this.posts.data;
