@@ -83,7 +83,6 @@ class CategoryPostDecorator {
     }
 
     #createColumns(widths) {
-        this.#trimReferenceTableBody(); 
 
     }
 
