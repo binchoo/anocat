@@ -1,7 +1,10 @@
 
 class CategoryPostDecorator {
+
     reference;
+
     headerWidth = 0;
+
     posts = {};
 
     enum = {
@@ -11,13 +14,18 @@ class CategoryPostDecorator {
     }
 
     constructor(reference='div.another_category') {
+
         this.reference = document.querySelector(reference);
+
         this.#fetchCategoryPosts();
+
         this.#trimReference();
     }
 
     #fetchCategoryPosts() {
+
         const as = document.querySelectorAll(this.enum.SELECT_CATEGORY_A);
+
         this.posts.category = Array.prototype.map.call(as, it=>it.textContent).join(' > ');
         this.posts.category_links = Array.prototype.map.call(as, it=>it.href);
 
@@ -38,19 +46,22 @@ class CategoryPostDecorator {
     }
 
     #trimReference() {
+
         const h4s = this.reference.getElementsByTagName('h4');
+
         for (let i = 0; i < h4s.length; i++)
             h4s[i].remove();
     }
 
     firstHeader(width, renderer) {
-        const {table, thead, tbody} = this.#getOrCreateContext();
-        const tr = document.createElement('tr');
-        const th = document.createElement('th');
 
+        const {table, thead, tbody} = this.#getOrCreateContext();
+
+        const th = document.createElement('th');
         th.setAttribute('colspan', width);
         th.appendChild(renderer(this.posts));
 
+        const tr = document.createElement('tr');
         tr.appendChild(th);
         tr.classList.add('first-header');
 
@@ -62,22 +73,25 @@ class CategoryPostDecorator {
     }
 
     secondHeader(widths, renderer) {
+
         const {table, thead, tbody} = this.#getOrCreateContext();
 
-        if (this.headerWidth != widths.reduce((x, y)=> x + y)) return;
+        if (this.headerWidth != widths.reduce((x, y)=> x + y)) 
+          return;
         
         const tr = document.createElement('tr')
-        tr.classList.add('second-header');
 
         for (let i = 0; i < widths.length; i++) {
-          const width = widths[i];
           const th = document.createElement('th');
-          th.setAttribute('collspan', width);
+          th.setAttribute('colspan', widths[i]);
           th.appendChild(renderer(this.posts, i));
+
           tr.appendChild(th);
         }
+
+        tr.classList.add('second-header');
+
         thead.appendChild(tr);
-        
     }
 
     #createColumns(widths) {
