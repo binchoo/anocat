@@ -4,6 +4,7 @@ class CategoryPostDecorator {
     hasHeader = false;
     headerWidth = 2;
     posts = {};
+
     enum = {
         SELECT_CATEGORY_A: 'div.another_category>h4>a',
         SELECT_POSTS_A: 'div.another_category th a',
@@ -81,11 +82,11 @@ class CategoryPostDecorator {
     }
 
     #createColumns(widths) {
-        this.#trimReferenceTable(); 
+        this.#trimReferenceTableBody(); 
 
     }
 
-    #trimReferenceTable() {
+    #trimReferenceTableBody() {
       const tbody = this.#getContext().tbody;
       const rows = tbody.getElementsByTagName('tr');
       for (let i = 0; i < rows.length; i++)
@@ -94,9 +95,9 @@ class CategoryPostDecorator {
 
     #getContext() {
       return {
-        table: this.reference.getElementsByTagName('table')?.item(0);
-        thead: this.reference.getElementsByTagName('thead')?.item(0) ?? document.createElement('thead');
-        tbody: this.reference.getElementsByTagName('tbody')?.item(0) ?? document.createElement('tbody');
+        table: this.reference.getElementsByTagName('table')?.item(0),
+        thead: this.reference.getElementsByTagName('thead')?.item(0) ?? document.createElement('thead'),
+        tbody: this.reference.getElementsByTagName('tbody')?.item(0) ?? document.createElement('tbody')
       }
     }
 
