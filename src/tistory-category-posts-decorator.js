@@ -137,10 +137,21 @@ class CategoryPostDecorator {
     }
 
     topView(renderer) {
-
+      this.reference.insertBefore(
+        this.#createCustomView(renderer(this.posts)), this.reference.firstChild);
     }
 
     bottomView(renderer) {
-
+      this.reference.appendChild(
+        this.#createCustomView(renderer(this.posts));
+      )
     }
+    
+    #createCustomView(renderer, classname) {
+      const div = documnet.createElement('div');
+      div.classList.add(classname);
+      div.appendChild(renderer(this.posts));
+      return div;
+    }
+
 }
