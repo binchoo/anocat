@@ -1,7 +1,7 @@
 
 class CategoryPostDecorator {
     reference;
-    headerWidth = 2;
+    headerWidth = 0;
     posts = {};
 
     enum = {
@@ -63,8 +63,6 @@ class CategoryPostDecorator {
 
     secondHeader(widths, renderer) {
         const {table, thead, tbody} = this.#getOrCreateContext();
-
-        if (!table) return;
 
         if (this.headerWidth != widths.reduce((x, y)=> x + y)) return;
         
