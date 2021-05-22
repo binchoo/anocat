@@ -148,7 +148,7 @@ class CategoryPostDecorator {
     }
     
     #createCustomView(renderer, classname) {
-      const div = documnet.createElement('div');
+      const div = document.createElement('div');
       div.classList.add(classname);
       div.appendChild(renderer(this.posts));
       return div;
