@@ -2,6 +2,7 @@
 class CategoryPostDecorator {
     reference;
     hasHeader = false;
+    headerWidth = 2;
     posts = {};
     enum = {
         SELECT_CATEGORY_A: 'div.another_category>h4>a',
@@ -41,16 +42,20 @@ class CategoryPostDecorator {
             h4s[i].remove();
     }
 
-    firstHeader(renderer) {
-        this.hasHeader = true;
-
+    firstHeader(width, renderer) {
         const table = this.reference.getElementsByTagName('table')[0];
         const tr = document.createElement('tr');
         const th = document.createElement('th');
+        
+        th.classList.add('first-header');
+        th.setAttribute('colspan', width);
+        th.appendChild(renderer(this.posts));
 
-        th?.appendChild(renderer(this.posts));
-        tr?.appendChild(th);
+        tr.appendChild(th);
         table?.insertBefore(tr, table?.firstChild);
+
+        this.hasHeader = true;
+        this.headerWidth = width;
     }
 
     secondHeader(widths, renderer) {
