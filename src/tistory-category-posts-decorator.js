@@ -74,6 +74,7 @@ class CategoryPostDecorator {
         for (let i = 0; i < widths.length; i++) {
           const width = widths[i];
           const th = document.createElement('th');
+          th.setAttribute('collspan', width);
           th.appendChild(renderer(this.posts, i));
           tr.appendChild(th);
         }
