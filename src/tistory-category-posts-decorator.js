@@ -1,7 +1,6 @@
 
 class CategoryPostDecorator {
     reference;
-    hasHeader = false;
     headerWidth = 2;
     posts = {};
 
@@ -24,6 +23,7 @@ class CategoryPostDecorator {
 
         const posts = document.querySelectorAll(this.enum.SELECT_POSTS_A);
         const dates = document.querySelectorAll(this.enum.SELECT_POSTS_DATA_TD);
+
         if (posts.length == dates.length) {
             var data = [];
             for (let i = 0; i < posts.length; i++) {
@@ -44,7 +44,7 @@ class CategoryPostDecorator {
     }
 
     firstHeader(width, renderer) {
-        const {table, thead, tbody} = this.#getContext();
+        const {table, thead, tbody} = this.#getOrCreateContext();
         const tr = document.createElement('tr');
         const th = document.createElement('th');
 
@@ -55,17 +55,17 @@ class CategoryPostDecorator {
         tr.classList.add('first-header');
 
         thead.appendChild(tr);
+
         table?.insertBefore(thead, table?.firstChild);
 
-        this.hasHeader = true;
         this.headerWidth = width;
     }
 
     secondHeader(widths, renderer) {
-        const {table, thead, tbody} = this.#getContext();
+        const {table, thead, tbody} = this.#getOrCreateContext();
 
-        if (!thead) return;
-        if (this.hasHeader == false) return;
+        if (!table) return;
+
         if (this.headerWidth != widths.reduce((x, y)=> x + y)) return;
         
         const tr = document.createElement('tr')
@@ -87,13 +87,13 @@ class CategoryPostDecorator {
     }
 
     #trimReferenceTableBody() {
-      const tbody = this.#getContext().tbody;
+      const tbody = this.#getOrCreateContext().tbody;
       const rows = tbody.getElementsByTagName('tr');
       for (let i = 0; i < rows.length; i++)
         rows[i].remove();
     }
 
-    #getContext() {
+    #getOrCreateContext() {
       return {
         table: this.reference.getElementsByTagName('table')?.item(0),
         thead: this.reference.getElementsByTagName('thead')?.item(0) ?? document.createElement('thead'),
