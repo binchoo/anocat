@@ -122,8 +122,10 @@ class CategoryPostDecorator {
       const tbody = this.#getOrCreateContext().tbody;
       const rows = tbody.getElementsByTagName('tr');
 
-      for (let i = 0; i < rows.length; i++)
+      for (let i = 0; i < rows.length; i++) {
+        console.log(rows[i]);
         rows[i].remove();
+      }
     }
 
     #getOrCreateContext() {
