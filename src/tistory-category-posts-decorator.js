@@ -50,12 +50,10 @@ class CategoryPostDecorator {
         });
 
         posts.forEach((it, index)=> {
-            const post = posts[i];
-            const date = dates[i];
             data.push({
-                title: post.textContent,
-                link: post.href,
-                date: date.textContent,
+                title: it.textContent,
+                link: it.href,
+                date: dates[index].textContent,
             });
         });
         
