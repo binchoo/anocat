@@ -7,7 +7,12 @@ class CategoryPostDecorator {
     
     columnCount = 0;
 
-    posts = {};
+    posts = {
+        category: undefined,
+        category_links: undefined,
+        currentIndex: undefined,
+        data: undefined
+    };
 
     query = {
         SELECT_CATEGORY_A: 'div.another_category>h4>a',
@@ -27,29 +32,37 @@ class CategoryPostDecorator {
     #fetchCategoryPosts() {
 
         const as = document.querySelectorAll(this.query.SELECT_CATEGORY_A);
-
-        this.posts.category = Array.prototype.map.call(as, it=>it.textContent).join(' > ');
-        this.posts.category_links = Array.prototype.map.call(as, it=>it.href);
+        const category_per_depth = [];
+        var category_links = []; 
+        var currentIndex; 
 
         const posts = document.querySelectorAll(this.query.SELECT_POSTS_A);
         const dates = document.querySelectorAll(this.query.SELECT_POSTS_DATA_TD);
-        
-        if (posts.length == dates.length) {
-            var data = [];
-            for (let i = 0; i < posts.length; i++) {
-                const post = posts[i];
-                const date = dates[i];
-                data.push({
-                    title: post.textContent,
-                    link: post.href,
-                    date: date.textContent,
-                });
+        var data = [];
 
-                if (this.posts.category_links[i].classList.contains('current'))
-                    this.posts.current = i;
+        as.forEach((it, index)=> {
+            category_per_depth.push(it.textContent);
+            category_links.push(it.href);
+            
+            if (it.classList.contains('current')) {
+                currentIndex = index;        
             }
-            this.posts.data = data;
-        }
+        });
+
+        posts.forEach((it, index)=> {
+            const post = posts[i];
+            const date = dates[i];
+            data.push({
+                title: post.textContent,
+                link: post.href,
+                date: date.textContent,
+            });
+        });
+        
+        this.posts.category = category_per_depth.join(' > ');
+        this.posts.category_links = category_links;
+        this.posts.currentIndex = currentIndex;
+        this.posts.data = data;
     }
 
     #trimReference() {
