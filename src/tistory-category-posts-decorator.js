@@ -44,9 +44,8 @@ class CategoryPostDecorator {
             category_per_depth.push(it.textContent);
             category_links.push(it.href);
             
-            if (it.classList.contains('current')) {
+            if (it.classList.contains('current'))
                 currentIndex = index;        
-            }
         });
 
         posts.forEach((it, index)=> {
