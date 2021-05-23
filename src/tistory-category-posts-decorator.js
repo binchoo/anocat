@@ -136,7 +136,7 @@ class CategoryPostDecorator {
 
     topView(renderer) {
       this.reference.insertBefore(
-        this.#createCustomView(renderer, this.reference.firstChild), 'top-view');
+        this.#createCustomView(rendere, 'top-view'), this.reference.firstChild);
     }
 
     bottomView(renderer) {
