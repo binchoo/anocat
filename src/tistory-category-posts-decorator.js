@@ -34,21 +34,20 @@ class CategoryPostDecorator {
         const as = document.querySelectorAll(this.query.SELECT_CATEGORY_A);
         const category_per_depth = [];
         var category_links = []; 
-        var currentIndex; 
 
         const posts = document.querySelectorAll(this.query.SELECT_POSTS_A);
         const dates = document.querySelectorAll(this.query.SELECT_POSTS_DATA_TD);
+        var currentIndex; 
         var data = [];
 
         as.forEach((it, index)=> {
             category_per_depth.push(it.textContent);
             category_links.push(it.href);
-            
-            if (it.classList.contains('current'))
-                currentIndex = index;        
         });
 
         posts.forEach((it, index)=> {
+            if (!currentIndex && it.classList.contains('current'))
+                currentIndex = index;        
             data.push({
                 title: it.textContent,
                 link: it.href,
