@@ -7,9 +7,14 @@ class CategoryPostDecorator {
     
     columnCount = 0;
 
-    posts = {};
+    posts = {
+        category: undefined,
+        category_links: undefined,
+        currentIndex: undefined,
+        data: undefined
+    };
 
-    enum = {
+    query = {
         SELECT_CATEGORY_A: 'div.another_category>h4>a',
         SELECT_POSTS_A: 'div.another_category th a',
         SELECT_POSTS_DATA_TD: 'div.another_category td'
@@ -26,25 +31,36 @@ class CategoryPostDecorator {
 
     #fetchCategoryPosts() {
 
-        const as = document.querySelectorAll(this.enum.SELECT_CATEGORY_A);
+        const as = document.querySelectorAll(this.query.SELECT_CATEGORY_A);
+        const category_per_depth = [];
+        var category_links = []; 
+        var currentIndex; 
 
-        this.posts.category = Array.prototype.map.call(as, it=>it.textContent).join(' > ');
-        this.posts.category_links = Array.prototype.map.call(as, it=>it.href);
+        const posts = document.querySelectorAll(this.query.SELECT_POSTS_A);
+        const dates = document.querySelectorAll(this.query.SELECT_POSTS_DATA_TD);
+        var data = [];
 
-        const posts = document.querySelectorAll(this.enum.SELECT_POSTS_A);
-        const dates = document.querySelectorAll(this.enum.SELECT_POSTS_DATA_TD);
-
-        if (posts.length == dates.length) {
-            var data = [];
-            for (let i = 0; i < posts.length; i++) {
-                data.push({
-                    title: posts[i].textContent,
-                    link: posts[i].href,
-                    date: dates[i].textContent,
-                });
+        as.forEach((it, index)=> {
+            category_per_depth.push(it.textContent);
+            category_links.push(it.href);
+            
+            if (it.classList.contains('current')) {
+                currentIndex = index;        
             }
-            this.posts.data = data;
-        }
+        });
+
+        posts.forEach((it, index)=> {
+            data.push({
+                title: it.textContent,
+                link: it.href,
+                date: dates[index].textContent,
+            });
+        });
+        
+        this.posts.category = category_per_depth.join(' > ');
+        this.posts.category_links = category_links;
+        this.posts.currentIndex = currentIndex;
+        this.posts.data = data;
     }
 
     #trimReference() {
@@ -122,10 +138,8 @@ class CategoryPostDecorator {
       const tbody = this.#getOrCreateContext().tbody;
       const rows = tbody.getElementsByTagName('tr');
 
-      for (let i = rows.length - 1; i >= 0; i--) {
-        console.log(rows[i]);
+      for (let i = rows.length - 1; i >= 0; i--)
         rows[i].remove();
-      }
     }
 
     #getOrCreateContext() {
@@ -137,10 +151,20 @@ class CategoryPostDecorator {
     }
 
     topView(renderer) {
-
+      this.reference.insertBefore(
+        this.#createCustomView(renderer, 'top-view'), this.reference.firstChild);
     }
 
     bottomView(renderer) {
-
+      this.reference.appendChild(
+        this.#createCustomView(renderer), 'bottom-view');
     }
+    
+    #createCustomView(renderer, classname) {
+      const div = document.createElement('div');
+      div.classList.add(classname);
+      div.appendChild(renderer(this.posts));
+      return div;
+    }
+
 }
