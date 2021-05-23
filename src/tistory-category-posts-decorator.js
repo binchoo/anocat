@@ -144,7 +144,6 @@ class CategoryPostDecorator {
     bottomView(renderer) {
       this.reference.appendChild(
         this.#createCustomView(renderer));
-      )
     }
     
     #createCustomView(renderer, classname) {
