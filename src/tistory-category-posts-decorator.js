@@ -45,7 +45,7 @@ class CategoryPostDecorator {
                     date: date.textContent,
                 });
 
-                if (this.posts.category_links[i].classList.contains('current')
+                if (this.posts.category_links[i].classList.contains('current'))
                     this.posts.current = i;
             }
             this.posts.data = data;
