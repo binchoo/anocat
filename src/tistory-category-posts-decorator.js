@@ -33,15 +33,20 @@ class CategoryPostDecorator {
 
         const posts = document.querySelectorAll(this.query.SELECT_POSTS_A);
         const dates = document.querySelectorAll(this.query.SELECT_POSTS_DATA_TD);
-
+        
         if (posts.length == dates.length) {
             var data = [];
             for (let i = 0; i < posts.length; i++) {
+                const post = posts[i];
+                const date = dates[i];
                 data.push({
-                    title: posts[i].textContent,
-                    link: posts[i].href,
-                    date: dates[i].textContent,
+                    title: post.textContent,
+                    link: post.href,
+                    date: date.textContent,
                 });
+
+                if (this.posts.category_links[i].classList.contains('current')
+                    this.posts.current = i;
             }
             this.posts.data = data;
         }
