@@ -1,4 +1,3 @@
-
 class AnocatDecorator {
 
   viewConfig = {
@@ -89,11 +88,12 @@ class AnocatDecorator {
 
   buildFirstHeader() {
 
+    const config = this.viewConfig['first_header'];
     const {table, thead, tbody} = this.getOrCreateContext();
 
     const th = document.createElement('th');
-    th.setAttribute('colspan', width);
-    th.appendChild(renderer(this.posts));
+    th.setAttribute('colspan', config.headerWidth);
+    th.appendChild(config.renderer(this.posts));
 
     const tr = document.createElement('tr');
     tr.appendChild(th);
@@ -107,7 +107,7 @@ class AnocatDecorator {
   }
 
   secondHeader(widths, renderer) {
-    
+
     const second_header_width = widths.reduce((x, y)=> x + y);
 
     if (this.viewConfig['first_header']?.headerWidth != second_header_width)
@@ -115,6 +115,7 @@ class AnocatDecorator {
 
     this.viewConfig['second_header'] = {
       headerWidth: second_header_width,
+      headerWidths: widths,
       columnCount: widths.length,
       renderer: renderer
     }
@@ -127,14 +128,15 @@ class AnocatDecorator {
   }
 
   buildSecondHeader() {
-              
-    const {table, thead, tbody} = this.getOrCreateContext();
+                  
+    const config = this.viewConfig['second_header'];
+    const thead = this.getOrCreateContext().thead;
     const tr = document.createElement('tr');
 
-    for (let i = 0; i < widths.length; i++) {
+    for (let i = 0; i < config.columnCount; i++) {
       const th = document.createElement('th');
-      th.setAttribute('colspan', widths[i]);
-      th.appendChild(renderer(this.posts, i));
+      th.setAttribute('colspan', config.headerWIdths[i]);
+      th.appendChild(config.renderer(this.posts, i));
       tr.appendChild(th);
     } 
 
@@ -156,6 +158,8 @@ class AnocatDecorator {
 
   buildBody() {
 
+    const config = this.viewConfig['body'];
+
     this.trimReferenceTableBody();
     
     const tbody = this.getOrCreateContext().tbody;
@@ -165,7 +169,7 @@ class AnocatDecorator {
       const tr = document.createElement('tr');
       for (let j = 0; j < this.columnCount; j++) {
         const th = document.createElement('th');
-        th.appendChild(renderer(this.posts, i, j));
+        th.appendChild(config.renderer(this.posts, i, j));
         tr.appendChild(th);
       }
       tbody.appendChild(tr);
@@ -207,10 +211,11 @@ class AnocatDecorator {
 
   buildTopView() {
 
+    const config = this.viewConfig['top_view'];
     const ref = this.anocatRef.get();
 
     ref.insertBefore(
-      this.createCustomView(renderer, 'top-view'), ref.firstChild);
+      this.createCustomView(config.renderer, 'top-view'), ref.firstChild);
 
   }
 
@@ -225,11 +230,12 @@ class AnocatDecorator {
   }
 
   buildBottomView() {
-
+    
+    const config = this.viewConfig['top_view'];
     const ref = this.anocatRef.get();
 
     ref.appendChild(
-      this.createCustomView(renderer), 'bottom-view');
+      this.createCustomView(config.renderer), 'bottom-view');
 
   }
   
