@@ -9,19 +9,19 @@ class AnocatDecorator {
   }
 
   posts = {
-      category: undefined,
-      category_links: undefined,
-      currentIndex: undefined,
-      data: undefined
+    category: undefined,
+    category_links: undefined,
+    currentIndex: undefined,
+    data: undefined
   };
 
   anocatRef;
 
-  constructor(reference='') {
+  constructor(reference = '') {
 
-      this.anocatRef = AnocatReference(reference);
+    this.anocatRef = AnocatReference(reference);
 
-      this.fetchCategoryPosts();
+    this.fetchCategoryPosts();
 
   };
 
@@ -45,9 +45,9 @@ class AnocatDecorator {
 
     const as = AnocatReference.SELECT_CATEGORY_A();
     const category_per_depth = [];
-    var category_links = []; 
+    var category_links = [];
 
-    as.forEach((it, index)=> {
+    as.forEach((it, index) => {
       category_per_depth.push(it.textContent);
       category_links.push(it.href);
     });
@@ -57,19 +57,19 @@ class AnocatDecorator {
 
     const posts = AnocatReference.SELECT_POSTS_A();
     const dates = AnocatReference.SELECT_POSTS_DATE_TD();
-    var currentIndex; 
+    var currentIndex;
     var data = [];
 
-    posts.forEach((it, index)=> {
-        if (!currentIndex && it.classList.contains('current'))
-            currentIndex = index;        
-        data.push({
-            title: it.textContent,
-            link: it.href,
-            date: dates[index].textContent,
-        });
+    posts.forEach((it, index) => {
+      if (!currentIndex && it.classList.contains('current'))
+        currentIndex = index;
+      data.push({
+        title: it.textContent,
+        link: it.href,
+        date: dates[index].textContent,
+      });
     });
-    
+
     this.posts.currentIndex = currentIndex;
     this.posts.data = data;
 
@@ -77,19 +77,23 @@ class AnocatDecorator {
 
   firstHeader(width, renderer) {
 
-      this.viewConfig['first_header'] = {
-        headerWidth: width,
-        renderer: renderer
-      }
+    this.viewConfig['first_header'] = {
+      headerWidth: width,
+      renderer: renderer
+    }
 
-      return this;
+    return this;
 
   }
 
   buildFirstHeader() {
 
     const config = this.viewConfig['first_header'];
-    const {table, thead, tbody} = this.getOrCreateContext();
+    const {
+      table,
+      thead,
+      tbody
+    } = this.getOrCreateContext();
 
     const th = document.createElement('th');
     th.setAttribute('colspan', config.headerWidth);
@@ -100,7 +104,7 @@ class AnocatDecorator {
 
     thead.appendChild(tr);
 
-    table?.insertBefore(thead, table?.firstChild);
+    table ?.insertBefore(thead, table ?.firstChild);
 
     tr.classList.add('first-header');
 
@@ -108,7 +112,7 @@ class AnocatDecorator {
 
   secondHeader(widths, renderer) {
 
-    const second_header_width = widths.reduce((x, y)=> x + y);
+    const second_header_width = widths.reduce((x, y) => x + y);
 
     if (this.viewConfig['first_header']?.headerWidth != second_header_width)
       return undefined;
@@ -120,15 +124,14 @@ class AnocatDecorator {
       renderer: renderer
     }
 
-    this.viewConfig['first_header']['columnCount'] 
-      = this.viewConfig['second_header']['columnCount']
+    this.viewConfig['first_header']['columnCount'] = this.viewConfig['second_header']['columnCount']
 
     return this;
 
   }
 
   buildSecondHeader() {
-                  
+
     const config = this.viewConfig['second_header'];
     const thead = this.getOrCreateContext().thead;
     const tr = document.createElement('tr');
@@ -138,7 +141,7 @@ class AnocatDecorator {
       th.setAttribute('colspan', config.headerWIdths[i]);
       th.appendChild(config.renderer(this.posts, i));
       tr.appendChild(th);
-    } 
+    }
 
     thead.appendChild(tr);
 
@@ -161,7 +164,7 @@ class AnocatDecorator {
     const config = this.viewConfig['body'];
 
     this.trimReferenceTableBody();
-    
+
     const tbody = this.getOrCreateContext().tbody;
     const data = this.posts.data;
 
@@ -230,7 +233,7 @@ class AnocatDecorator {
   }
 
   buildBottomView() {
-    
+
     const config = this.viewConfig['top_view'];
     const ref = this.anocatRef.get();
 
@@ -238,7 +241,7 @@ class AnocatDecorator {
       this.createCustomView(config.renderer), 'bottom-view');
 
   }
-  
+
   createCustomView(renderer, classname) {
 
     const div = document.createElement('div');
@@ -256,7 +259,7 @@ class AnocatReference {
 
   reference;
 
-  constructor(query='') {
+  constructor(query = '') {
     if ('' == query)
       this.reference = AnocatReference.select(query);
     else
@@ -267,27 +270,27 @@ class AnocatReference {
     return this.reference;
   }
 
-  static SELECT_ANOCAT = function() {
-      return AnocatReference.select('div.another_category');
+  static SELECT_ANOCAT = function () {
+    return AnocatReference.select('div.another_category');
   }
 
-  static SELECT_CATEGORY_A = function() {
+  static SELECT_CATEGORY_A = function () {
     return AnocatReference.select_all('div.another_category>h4>a');
   }
 
-  static SELECT_POSTS_A = function() {
+  static SELECT_POSTS_A = function () {
     return AnocatReference.select_all('div.another_category th a');
   }
 
-  static SELECT_POSTS_DATE_TD = function() {
+  static SELECT_POSTS_DATE_TD = function () {
     return AnocatReference.select_all('div.another_category td');
   }
 
-  static select = function(query) {
+  static select = function (query) {
     return document.querySelector(query);
   }
 
-  static select_all = function(query) {
+  static select_all = function (query) {
     return document.querySelectorAll(query);
   }
 }
