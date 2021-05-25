@@ -252,7 +252,7 @@ class TableBodyBuilder extends ViewBuilder {
 
     for (let i = 0; i < data.length; i++) {
       const tr = document.createElement('tr');
-      for (let j = 0; j < this.columnCount; j++) {
+      for (let j = 0; j < viewConfig.columnCount; j++) {
         const th = document.createElement('th');
         th.appendChild(viewConfig.renderer(posts, i, j));
         tr.appendChild(th);
@@ -293,6 +293,7 @@ decorator.secondHeader([1, 1], (posts,  i)=> {
 
 decorator.tableBody((posts, i, j)=> {
   const post = posts.data[i];
+  console.log(posts);
   if (j == 0) {
     const a = document.createElement('a');
     a.href = post.link;

@@ -17,6 +17,7 @@ decorator.secondHeader([1, 1], (posts,  i)=> {
 
 decorator.tableBody((posts, i, j)=> {
   const post = posts.data[i];
+  console.log(posts);
   if (j == 0) {
     const a = document.createElement('a');
     a.href = post.link;
