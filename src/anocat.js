@@ -287,10 +287,10 @@ class AnocatReference {
   }
 
   static select = function (query) {
-    return document.querySelector(query);
+    return this.reference.querySelector(query);
   }
 
   static select_all = function (query) {
-    return document.querySelectorAll(query);
+    return this.reference.querySelectorAll(query);
   }
 }
