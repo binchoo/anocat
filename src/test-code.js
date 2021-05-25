@@ -54,7 +54,7 @@ class AnocatDecorator {
       const builder = this.viewBuilder[key];
       const config = this.viewConfig[key];
       if (builder && config)
-        builder.build(this.anocatRef, this.posts, viewConfig[key]);
+        builder.build(this.anocatRef, this.posts, this.viewConfig[key]);
     });
   }
 
