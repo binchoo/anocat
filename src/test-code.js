@@ -199,7 +199,7 @@ class ViewBuilder {
 class TopViewBuilder extends ViewBuilder {
   build(anocatRef, posts, viewConfig) {
     const ref = anocatRef.get();
-    ref.insertBefore(this.wrap(config.renderer(posts), viewConfig.className), 
+    ref.insertBefore(this.wrap(viewConfig.renderer(posts), viewConfig.className), 
       ref.firstChild);
   }
 }
@@ -270,7 +270,7 @@ class TableBodyBuilder extends ViewBuilder {
 class BottomViewBuilder extends ViewBuilder {
   build(anocatRef, posts, viewConfig) {
     const ref = anocatRef.get();
-    ref.appendChild(this.wrap(config.renderer(posts), viewConfig.className));
+    ref.appendChild(this.wrap(viewConfig.renderer(posts), viewConfig.className));
   }
 }
 var decorator = new AnocatDecorator();
