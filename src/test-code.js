@@ -261,7 +261,7 @@ class TableBodyBuilder extends ViewBuilder {
       }
       tbody.appendChild(tr);
     }
-    table.appendChild(table);
+    table.appendChild(tbody);
     tbody.classList.add(viewConfig.className);
   }
 
