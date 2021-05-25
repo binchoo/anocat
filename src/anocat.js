@@ -246,6 +246,7 @@ class SecondHeaderBuilder extends ViewBuilder {
 
 class TableBodyBuilder extends ViewBuilder {
   build(anocatRef, posts, viewConfig) {
+    const table = anocatRef.find_or_create_table();
     const tbody = anocatRef.find_or_create_tbody();
     const data = posts.data;
 
@@ -260,6 +261,7 @@ class TableBodyBuilder extends ViewBuilder {
       }
       tbody.appendChild(tr);
     }
+    table.appendChild(table);
     tbody.classList.add(viewConfig.className);
   }
 
