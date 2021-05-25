@@ -185,7 +185,7 @@ class AnocatReference {
   }
 }
 
-class ViewBuilder() {
+class ViewBuilder {
   build(annocatRef, posts, viewConfig) {}
 
   wrap(view, className) {
@@ -196,7 +196,7 @@ class ViewBuilder() {
   }
 }
 
-class TopViewBuilder() extends ViewBuilder {
+class TopViewBuilder extends ViewBuilder {
   build(anocatRef, posts, viewConfig) {
     const ref = anocatRef.get();
     ref.insertBefore(this.wrap(config.renderer(posts), viewConfig.className), 
@@ -204,7 +204,7 @@ class TopViewBuilder() extends ViewBuilder {
   }
 }
 
-class FirstHeaderBuilder() extends ViewBuilder {
+class FirstHeaderBuilder extends ViewBuilder {
   build(anocatRef, posts, viewConfig) {
     const ref = anocatRef.get();
     const table = anocatRef.find_or_create_table();
@@ -224,7 +224,7 @@ class FirstHeaderBuilder() extends ViewBuilder {
   }
 }
 
-class SecondHeaderBuilder() extends ViewBuilder {
+class SecondHeaderBuilder extends ViewBuilder {
   build(anocatRef, posts, viewConfig) {
     const thead = anocatRef.find_or_create_thead();
     const tr = document.createElement('tr');
@@ -242,7 +242,7 @@ class SecondHeaderBuilder() extends ViewBuilder {
   }
 }
 
-class TableBodyBuilder() extends ViewBuilder {
+class TableBodyBuilder extends ViewBuilder {
   build(anocatRef, posts, viewConfig) {
     const tbody = anocatRef.find_or_create_tbody();
     const data = posts.data;
@@ -267,7 +267,7 @@ class TableBodyBuilder() extends ViewBuilder {
   }
 }
 
-class BottomViewBuilder() extends ViewBuilder {
+class BottomViewBuilder extends ViewBuilder {
   build(anocatRef, posts, viewConfig) {
     const ref = anocatRef.get();
     ref.appendChild(this.wrap(config.renderer(posts), viewConfig.className));
