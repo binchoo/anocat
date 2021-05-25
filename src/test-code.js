@@ -121,6 +121,7 @@ class AnocatDecorator {
   tableBody(renderer) {
     this.viewConfig.tableBody = {
       renderer: renderer,
+      columnCount: this.viewConfig.secondHeader.columnCount,
       className: 'table-body'
     }
     return this;
