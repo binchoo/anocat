@@ -9,11 +9,11 @@ class AnocatDecorator {
   }
 
   viewBuilder = {
-    topView: TopViewBuilder(),
-    firstHeader: FirstHeaderBuilder(),
-    secondHeader: SecondHeaderBuilder(),
-    tableBody: TableBodyBuilder(),
-    bottomView: BottomViewBuilder()
+    topView: new TopViewBuilder(),
+    firstHeader: new FirstHeaderBuilder(),
+    secondHeader: new SecondHeaderBuilder(),
+    tableBody: new TableBodyBuilder(),
+    bottomView: new BottomViewBuilder()
   } 
 
   posts = {
