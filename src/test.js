@@ -15,7 +15,7 @@ decorator.secondHeader([1, 1], (posts,  i)=> {
   return h3;
 });
 
-decorator.body((posts, i, j)=> {
+decorator.tableBody((posts, i, j)=> {
   const post = posts.data[i];
   if (j == 0) {
     const a = document.createElement('a');
@@ -54,3 +54,6 @@ decorator.topView((posts)=> {
   div.appendChild(next);
   return div;
 });
+
+
+decorator.commit();

@@ -54,7 +54,6 @@ class AnocatDecorator {
       const builder = this.viewBuilder[key];
       const config = this.viewConfig[key];
       if (builder && config) {
-        console.log(key);
         builder.build(this.anocatRef, this.posts, this.viewConfig[key]);
       }
     });
@@ -119,7 +118,7 @@ class AnocatDecorator {
     return this;
   }
 
-  body(renderer) {
+  tableBody(renderer) {
     this.viewConfig.tableBody = {
       renderer: renderer,
       className: 'table-body'
@@ -246,7 +245,6 @@ class SecondHeaderBuilder extends ViewBuilder {
 
 class TableBodyBuilder extends ViewBuilder {
   build(anocatRef, posts, viewConfig) {
-    const table = anocatRef.find_or_create_table();
     const tbody = anocatRef.find_or_create_tbody();
     const data = posts.data;
 
@@ -261,7 +259,6 @@ class TableBodyBuilder extends ViewBuilder {
       }
       tbody.appendChild(tr);
     }
-    table.appendChild(tbody);
     tbody.classList.add(viewConfig.className);
   }
 
