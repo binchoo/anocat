@@ -17,9 +17,12 @@ class AnocatDecorator {
 
   anocatRef;
 
-  constructor(reference = '') {
+  constructor(reference) {
 
-    this.anocatRef = AnocatReference(reference);
+    if (reference)
+      this.anocatRef = new AnocatReference(reference);
+    else
+      this.anocatRef = new AnocatReference();
 
     this.fetchCategoryPosts();
 
@@ -43,7 +46,7 @@ class AnocatDecorator {
 
   fetchCategoryPosts() {
 
-    const as = AnocatReference.SELECT_CATEGORY_A();
+    const as = this.anocatRef.select_category_a();
     const category_per_depth = [];
     var category_links = [];
 
@@ -55,8 +58,8 @@ class AnocatDecorator {
     this.posts.category = category_per_depth.join(' > ');
     this.posts.category_links = category_links;
 
-    const posts = AnocatReference.SELECT_POSTS_A();
-    const dates = AnocatReference.SELECT_POSTS_DATE_TD();
+    const posts = this.anocatRef.select_posts_a();
+    const dates = this.anocatRef.select_posts_date_td();
     var currentIndex;
     var data = [];
 
@@ -204,7 +207,7 @@ class AnocatDecorator {
 
   topView(renderer) {
 
-    this.viewConfig['top-view'] = {
+    this.viewConfig['top_view'] = {
       renderer: renderer
     }
 
@@ -218,7 +221,7 @@ class AnocatDecorator {
     const ref = this.anocatRef.get();
 
     ref.insertBefore(
-      this.createCustomView(config.renderer, 'top-view'), ref.firstChild);
+      this.createCustomView(config.renderer, 'top_view'), ref.firstChild);
 
   }
 
@@ -234,7 +237,7 @@ class AnocatDecorator {
 
   buildBottomView() {
 
-    const config = this.viewConfig['top_view'];
+    const config = this.viewConfig['bottom_view'];
     const ref = this.anocatRef.get();
 
     ref.appendChild(
@@ -257,40 +260,27 @@ class AnocatDecorator {
 
 class AnocatReference {
 
-  reference;
-
-  constructor(query = '') {
-    if ('' == query)
-      this.reference = AnocatReference.select(query);
-    else
-      this.reference = AnocatReference.SELECT_ANOCAT();
+  constructor(query = 'div.another_category') {
+      this.reference = document.querySelector(query);
   }
 
   get() {
     return this.reference;
   }
 
-  static SELECT_ANOCAT = function () {
-    return AnocatReference.select('div.another_category');
+  select_category_a = function () {
+    return this.select_all('h4>a');
   }
 
-  static SELECT_CATEGORY_A = function () {
-    return AnocatReference.select_all('div.another_category>h4>a');
+  select_posts_a = function () {
+    return this.select_all('th a');
   }
 
-  static SELECT_POSTS_A = function () {
-    return AnocatReference.select_all('div.another_category th a');
+  select_posts_date_td = function () {
+    return this.select_all('td');
   }
 
-  static SELECT_POSTS_DATE_TD = function () {
-    return AnocatReference.select_all('div.another_category td');
-  }
-
-  static select = function (query) {
-    return this.reference.querySelector(query);
-  }
-
-  static select_all = function (query) {
+  select_all = function (query) {
     return this.reference.querySelectorAll(query);
   }
 }
