@@ -53,6 +53,7 @@ class AnocatDecorator {
     Object.keys(this.viewBuilder).forEach(key=>{
       const builder = this.viewBuilder[key];
       const config = this.viewConfig[key];
+      console.log(key);
       if (builder && config)
         builder.build(this.anocatRef, this.posts, this.viewConfig[key]);
     });
