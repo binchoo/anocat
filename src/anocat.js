@@ -181,7 +181,7 @@ class AnocatReference {
   }
 
   find_or_create = function (tag) {
-    return this.reference.findElementsByTagName(tag) ?? document.createElement(tag);
+    return this.reference.getElementsByName(tag) ?? document.createElement(tag);
   }
 }
 
