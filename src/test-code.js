@@ -134,16 +134,31 @@ class AnocatDecorator {
     return this;
   }
 
-  tableBody(rowCount, columnCount, renderer) {
-    const defaultRowCount = this.posts.data.length;
-    const headerColumnCount = this.viewConfig.secondHeader.columnCount;
+  tableBody(renderer, rowCount=-1, columnCount=-1) {
 
-    this.viewConfig.tableBody = {
-      renderer: renderer,
-      rowCount: rowCount == -1 ? defaultRowCount : rowCount,
-      columnCount: columnCount >= headerColumnCount ? columnCount : headerColumnCount,
-      className: 'table-body'
+    if (this.usesLayout && this.viewConfig.tableBody) { // if useLayout has set tableBody layout
+      this.viewConfig.tableBody.renderer = renderer;
+    } else {
+      const defaultRowCount = this.posts.data.length;
+      const defaultColumnCount = this.viewConfig.secondHeader?.columnCount;
+
+      if (defaultColumnCount) {
+        if (columnCount > defaultColumnCount) {
+          columnCount = defaultColumnCount;
+        }
+      } else if (columnCount == -1) {
+        console.exception('Required parameter: columnCount');
+        return;
+      }
+  
+      this.viewConfig.tableBody = {
+        renderer: renderer,
+        rowCount: rowCount == -1 ? defaultRowCount : rowCount,
+        columnCount: columnCount,
+        className: 'table-body'
+      }
     }
+
     return this;
   }
 
@@ -385,8 +400,7 @@ class _TestViewConfigHolder {
 class _VerticalCardViewConfigHolder {
   constructor() {
     this.decorator = new AnocatDecorator();
-    this.decorator.firstHeader(1, undefined);
-    this.decorator.secondHeader([1], undefined);
+    this.decorator.tableBody(null, this.decorator.posts.data.length, 1);
   }
 
   getDecorator() {
@@ -397,23 +411,81 @@ class _VerticalCardViewConfigHolder {
 class _HorizontalCardViewConfigHolder {
   constructor() {
     this.decorator = new AnocatDecorator();
-    const width = this.decorator.posts.data.length;
-    this.decorator.firstHeader(width, undefined);
-    this.decorator.secondHeader(new Array(width).fill(1), undefined);
+    this.decorator.tableBody(null, 1, this.decorator.posts.data.length);
   }
 
   getDecorator() {
     return this.decorator;
   }
 }
-var decorator = AnocatDecorator.useLayout('card-horizontal')
-  .tableBody(1, -1, (posts, i, j)=>{
-    const post = posts.data[j];
-    console.log(i, j);
+/**
+ * Test: Card-Horizontal
+ */
 
-    const a = document.createElement('a');
-    a.href = post.link;
-    a.textContent = post.title;
-    return a; 
-  })
-  .commit();
+var decorator = AnocatDecorator.useLayout('card-horizontal');
+
+decorator.tableBody((posts, i, j)=>{
+  const post = posts.data[j];
+  console.log(i, j);
+
+  const a = document.createElement('a');
+  a.href = post.link;
+  a.textContent = post.title;
+  return a; 
+});
+
+decorator.commit();
+
+/**
+ * Test: Card-Horizontal, rowCount, columnCount ignored.
+ */
+
+var decorator = AnocatDecorator.useLayout('card-horizontal');
+
+decorator.tableBody((posts, i, j)=>{
+  const post = posts.data[j];
+  console.log(i, j);
+
+  const a = document.createElement('a');
+  a.href = post.link;
+  a.textContent = post.title;
+  return a; 
+}, 10000, 10000);
+
+decorator.commit();
+
+/**
+ * Test: Card-Vertical
+ */
+
+ var decorator = AnocatDecorator.useLayout('card-horizontal');
+
+ decorator.tableBody((posts, i, j)=>{
+   const post = posts.data[i];
+   console.log(i, j);
+ 
+   const a = document.createElement('a');
+   a.href = post.link;
+   a.textContent = post.title;
+   return a; 
+ });
+ 
+ decorator.commit();
+
+/**
+ * Test: Card-Vertical, rowCount, columnCount ignored.
+ */
+
+var decorator = AnocatDecorator.useLayout('card-vertical');
+
+decorator.tableBody((posts, i, j)=>{
+  const post = posts.data[i];
+  console.log(i, j);
+
+  const a = document.createElement('a');
+  a.href = post.link;
+  a.textContent = post.title;
+  return a; 
+}, 10000, 10000);
+
+decorator.commit();
