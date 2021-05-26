@@ -230,8 +230,10 @@ class ViewBuilder {
 class _TopViewBuilder extends ViewBuilder {
   build(anocatRef, posts, viewConfig) {
     const ref = anocatRef.get();
-    ref.insertBefore(this.wrap(viewConfig.renderer(posts), viewConfig.className),
+    if (viewConfig.renderer) {
+      ref.insertBefore(this.wrap(viewConfig.renderer(posts), viewConfig.className),
       ref.firstChild);
+    }
   }
 }
 
@@ -246,7 +248,9 @@ class _FirstHeaderBuilder extends ViewBuilder {
 
     th.setAttribute('colspan', viewConfig.headerWidth);
 
-    th.appendChild(viewConfig.renderer(posts));
+    if (viewConfig.renderer)
+      th.appendChild(viewConfig.renderer(posts));
+      
     tr.appendChild(th);
     thead.appendChild(tr);
     table.insertBefore(thead, table?.firstChild);
@@ -263,7 +267,10 @@ class _SecondHeaderBuilder extends ViewBuilder {
     for (let i = 0; i < viewConfig.columnCount; i++) {
       const th = document.createElement('th');
       th.setAttribute('colspan', viewConfig.headerWidths[i]);
-      th.appendChild(viewConfig.renderer(posts, i));
+
+      if (viewConfig.renderer)
+        th.appendChild(viewConfig.renderer(posts, i));
+
       tr.appendChild(th);
     }
 
@@ -284,7 +291,10 @@ class _TableBodyBuilder extends ViewBuilder {
       const tr = document.createElement('tr');
       for (let j = 0; j < viewConfig.columnCount; j++) {
         const th = document.createElement('th');
-        th.appendChild(viewConfig.renderer(posts, i, j));
+
+        if (viewConfig.renderer)
+          th.appendChild(viewConfig.renderer(posts, i, j));
+
         tr.appendChild(th);
       }
       tbody.appendChild(tr);
@@ -301,7 +311,8 @@ class _TableBodyBuilder extends ViewBuilder {
 class _BottomViewBuilder extends ViewBuilder {
   build(anocatRef, posts, viewConfig) {
     const ref = anocatRef.get();
-    ref.appendChild(this.wrap(viewConfig.renderer(posts), viewConfig.className));
+    if (viewConfig.renderer)
+      ref.appendChild(this.wrap(viewConfig.renderer(posts), viewConfig.className));
   }
 }
 
@@ -370,8 +381,8 @@ class _TestViewConfigHolder {
 class _VerticalCardViewConfigHolder {
   constructor() {
     this.decorator = new AnocatDecorator();
-    this.decorator.firstHeader(1, ()=>{});
-    this.decorator.secondHeader([1], ()=>{});
+    this.decorator.firstHeader(1, undefined);
+    this.decorator.secondHeader([1], undefined);
   }
 
   getDecorator() {
@@ -381,15 +392,15 @@ class _VerticalCardViewConfigHolder {
 
 class _HorizontalCardViewConfigHolder {
   constructor() {
-    const width = this.decorator.posts.data.length;
     this.decorator = new AnocatDecorator();
-    this.decorator.firstHeader(width, ()=>{});
-    this.decorator.secondHeader(new Array(width).fill(1), ()=>{});
+    const width = this.decorator.posts.data.length;
+    this.decorator.firstHeader(width, undefined);
+    this.decorator.secondHeader(new Array(width).fill(1), undefined);
   }
 
   getDecorator() {
     return this.decorator;
   }
 }
-var decorator = AnocatDecorator.useLayout('test');
+var decorator = AnocatDecorator.useLayout('card-horizontal');
 decorator.commit();

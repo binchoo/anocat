@@ -1,2 +1,2 @@
-var decorator = AnocatDecorator.useLayout('test');
+var decorator = AnocatDecorator.useLayout('card-horizontal');
 decorator.commit();
