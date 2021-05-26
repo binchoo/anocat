@@ -134,10 +134,14 @@ class AnocatDecorator {
     return this;
   }
 
-  tableBody(renderer) {
+  tableBody(rowCount, columnCount, renderer) {
+    const defaultRowCount = this.posts.data.length;
+    const headerColumnCount = this.viewConfig.secondHeader.columnCount;
+
     this.viewConfig.tableBody = {
       renderer: renderer,
-      columnCount: this.viewConfig.secondHeader.columnCount,
+      rowCount: rowCount == -1 ? defaultRowCount : rowCount,
+      columnCount: columnCount >= headerColumnCount ? columnCount : headerColumnCount,
       className: 'table-body'
     }
     return this;
@@ -287,7 +291,7 @@ class _TableBodyBuilder extends ViewBuilder {
 
     this.trimReferenceTableBody(tbody);
 
-    for (let i = 0; i < data.length; i++) {
+    for (let i = 0; i < viewConfig.rowCount; i++) {
       const tr = document.createElement('tr');
       for (let j = 0; j < viewConfig.columnCount; j++) {
         const th = document.createElement('th');
@@ -332,7 +336,7 @@ class _TestViewConfigHolder {
       h3.textContent = titles[i];
       return h3;
     })
-    .tableBody((posts, i, j)=> {
+    .tableBody(-1, -1, (posts, i, j)=> {
       const post = posts.data[i];
     
       if (j == 0) {
@@ -402,5 +406,14 @@ class _HorizontalCardViewConfigHolder {
     return this.decorator;
   }
 }
-var decorator = AnocatDecorator.useLayout('card-horizontal');
-decorator.commit();
+var decorator = AnocatDecorator.useLayout('card-horizontal')
+  .tableBody(1, -1, (posts, i, j)=>{
+    const post = posts.data[j];
+    console.log(i, j);
+
+    const a = document.createElement('a');
+    a.href = post.link;
+    a.textContent = post.title;
+    return a; 
+  })
+  .commit();
