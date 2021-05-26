@@ -10,14 +10,8 @@ class AnocatDecorator {
     bottom_view: undefined,
   }
 
-  posts = {
-    category: undefined,
-    category_links: undefined,
-    currentIndex: undefined,
-    data: undefined
-  };
-
   anocatRef = undefined;
+  anocatPost = undefined;
 
   usesLayout = false;
 
@@ -43,7 +37,7 @@ class AnocatDecorator {
 
   constructor(reference = 'div.another_category') {
     this.anocatRef = new AnocatReference(reference);
-    this.parsePostsInfo();
+    this.anocatPost = AnocatPost.from(this.anocatRef);
   };
 
   commit() {
@@ -64,41 +58,9 @@ class AnocatDecorator {
       const builder = this.viewBuilder[key];
       const config = this.viewConfig[key];
       if (builder && config) {
-        builder.build(this.anocatRef, this.posts, this.viewConfig[key]);
+        builder.build(this.anocatRef, this.anocatPost, this.viewConfig[key]);
       }
     });
-  }
-
-  parsePostsInfo() {
-    const as = this.anocatRef.select_category_a();
-    const category_per_depth = [];
-    var category_links = [];
-
-    as.forEach((it, index) => {
-      category_per_depth.push(it.textContent);
-      category_links.push(it.href);
-    });
-
-    this.posts.category = category_per_depth.join(' > ');
-    this.posts.category_links = category_links;
-
-    const posts = this.anocatRef.select_posts_a();
-    const dates = this.anocatRef.select_posts_date_td();
-    let currentIndex;
-    let data = [];
-
-    posts.forEach((it, index) => {
-      if (!currentIndex && it.classList.contains('current'))
-        currentIndex = index;
-      data.push({
-        title: it.textContent,
-        link: it.href,
-        date: dates[index].textContent,
-      });
-    });
-
-    this.posts.currentIndex = currentIndex;
-    this.posts.data = data;
   }
 
   firstHeader(width, renderer) {
@@ -139,7 +101,7 @@ class AnocatDecorator {
     if (this.usesLayout && this.viewConfig.tableBody) { // if useLayout has set tableBody layout
       this.viewConfig.tableBody.renderer = renderer;
     } else {
-      const defaultRowCount = this.posts.data.length;
+      const defaultRowCount = this.anocatPost.length;
       const defaultColumnCount = this.viewConfig.secondHeader?.columnCount;
 
       if (defaultColumnCount) {
@@ -219,6 +181,64 @@ class AnocatReference {
 
   find_or_create = function (tag) {
     return this.reference.getElementsByTagName(tag)?.item(0) ?? document.createElement(tag);
+  }
+}
+
+class AnocatPost {
+  static instance = undefined;
+
+  static anocatRef = undefined;
+
+  static from(anocatRef) {
+    if (!AnocatPost.instance) {
+      AnocatPost.anocatRef = anocatRef;
+      AnocatPost.instance = new AnocatPost(anocatRef);
+    }
+    return AnocatPost.instance;
+  }
+
+  category = undefined;
+  category_links = undefined;
+  currentIndex = undefined;
+  data = undefined;
+  length = undefined;
+
+  constructor() {
+    this.parsePostsInfo();
+  }
+
+  parsePostsInfo() {
+    const anocatRef = AnocatPost.anocatRef;
+    const as = anocatRef.select_category_a();
+    const category_per_depth = [];
+    var category_links = [];
+
+    as.forEach((it, index) => {
+      category_per_depth.push(it.textContent);
+      category_links.push(it.href);
+    });
+
+    this.category = category_per_depth.join(' > ');
+    this.category_links = category_links;
+
+    const posts = anocatRef.select_posts_a();
+    const dates = anocatRef.select_posts_date_td();
+    let currentIndex;
+    let data = [];
+
+    posts.forEach((it, index) => {
+      if (!currentIndex && it.classList.contains('current'))
+        currentIndex = index;
+      data.push({
+        title: it.textContent,
+        link: it.href,
+        date: dates[index].textContent,
+      });
+    });
+
+    this.currentIndex = currentIndex;
+    this.data = data;
+    this.length = data.length;
   }
 }
 
@@ -400,7 +420,7 @@ class _TestViewConfigHolder {
 class _VerticalCardViewConfigHolder {
   constructor() {
     this.decorator = new AnocatDecorator();
-    this.decorator.tableBody(null, this.decorator.posts.data.length, 1);
+    this.decorator.tableBody(null, this.decorator.anocatPost.length, 1);
   }
 
   getDecorator() {
@@ -411,7 +431,7 @@ class _VerticalCardViewConfigHolder {
 class _HorizontalCardViewConfigHolder {
   constructor() {
     this.decorator = new AnocatDecorator();
-    this.decorator.tableBody(null, 1, this.decorator.posts.data.length);
+    this.decorator.tableBody(null, 1, this.decorator.anocatPost.length);
   }
 
   getDecorator() {
