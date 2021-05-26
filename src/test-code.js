@@ -1,5 +1,7 @@
 class AnocatDecorator {
 
+  viewBuilder = itExtendsTistoryAnocatTable();
+
   viewConfig = {
     top_view: undefined,
     first_header: undefined,
@@ -8,14 +10,6 @@ class AnocatDecorator {
     bottom_view: undefined,
   }
 
-  viewBuilder = {
-    topView: new TopViewBuilder(),
-    firstHeader: new FirstHeaderBuilder(),
-    secondHeader: new SecondHeaderBuilder(),
-    tableBody: new TableBodyBuilder(),
-    bottomView: new BottomViewBuilder()
-  } 
-
   posts = {
     category: undefined,
     category_links: undefined,
@@ -23,17 +17,33 @@ class AnocatDecorator {
     data: undefined
   };
 
-  anocatRef;
+  anocatRef = undefined;
 
-  constructor(reference) {
+  usesLayout = false;
 
-    if (reference)
-      this.anocatRef = new AnocatReference(reference);
-    else
-      this.anocatRef = new AnocatReference();
+  static useLayout(layout, reference = 'div.another_category') {
+    let decorator;
+    switch (layout) {
+      case 'card-vertical':
+        decorator = new _VerticalCardViewConfigHolder().getDecorator();
+        break;
+      case 'card-horizontal':
+        decorator = new _HorizontalCardViewConfigHolder().getDecorator();
+        break;
+      case 'test':
+      default:
+        decorator = new _TestViewConfigHolder().getDecorator();
+    }
 
+    decorator.anocatRef = new AnocatReference(reference);
+    decorator.usesLayout = true;
+
+    return decorator;
+  }
+
+  constructor(reference = 'div.another_category') {
+    this.anocatRef = new AnocatReference(reference);
     this.parsePostsInfo();
-
   };
 
   commit() {
@@ -50,7 +60,7 @@ class AnocatDecorator {
   }
 
   buildView() {
-    Object.keys(this.viewBuilder).forEach(key=>{
+    Object.keys(this.viewBuilder).forEach(key => {
       const builder = this.viewBuilder[key];
       const config = this.viewConfig[key];
       if (builder && config) {
@@ -92,6 +102,9 @@ class AnocatDecorator {
   }
 
   firstHeader(width, renderer) {
+
+    if (this.usesLayout) return;
+
     this.viewConfig.firstHeader = {
       headerWidth: width,
       renderer: renderer,
@@ -101,6 +114,9 @@ class AnocatDecorator {
   }
 
   secondHeader(widths, renderer) {
+
+    if (this.usesLayout) return;
+
     const secondHeaderWidth = widths.reduce((x, y) => x + y);
 
     if (this.viewConfig.firstHeader?.headerWidth != secondHeaderWidth)
@@ -146,8 +162,8 @@ class AnocatDecorator {
 
 class AnocatReference {
 
-  constructor(query = 'div.another_category') {
-      this.reference = document.querySelector(query);
+  constructor(query) {
+    this.reference = document.querySelector(query);
   }
 
   get() {
@@ -187,6 +203,19 @@ class AnocatReference {
   }
 }
 
+/**
+ * Pre-declared viewBuilder loader
+ */
+var itExtendsTistoryAnocatTable = ()=>{
+  return {
+    topView: new _TopViewBuilder(),
+    firstHeader: new _FirstHeaderBuilder(),
+    secondHeader: new _SecondHeaderBuilder(),
+    tableBody: new _TableBodyBuilder(),
+    bottomView: new _BottomViewBuilder()
+  }; // viewBuilder
+}
+
 class ViewBuilder {
   build(annocatRef, posts, viewConfig) {}
 
@@ -198,15 +227,15 @@ class ViewBuilder {
   }
 }
 
-class TopViewBuilder extends ViewBuilder {
+class _TopViewBuilder extends ViewBuilder {
   build(anocatRef, posts, viewConfig) {
     const ref = anocatRef.get();
-    ref.insertBefore(this.wrap(viewConfig.renderer(posts), viewConfig.className), 
+    ref.insertBefore(this.wrap(viewConfig.renderer(posts), viewConfig.className),
       ref.firstChild);
   }
 }
 
-class FirstHeaderBuilder extends ViewBuilder {
+class _FirstHeaderBuilder extends ViewBuilder {
   build(anocatRef, posts, viewConfig) {
     const ref = anocatRef.get();
     const table = anocatRef.find_or_create_table();
@@ -220,13 +249,13 @@ class FirstHeaderBuilder extends ViewBuilder {
     th.appendChild(viewConfig.renderer(posts));
     tr.appendChild(th);
     thead.appendChild(tr);
-    table.insertBefore(thead, table ?.firstChild);
+    table.insertBefore(thead, table?.firstChild);
 
     tr.classList.add(viewConfig.className);
   }
 }
 
-class SecondHeaderBuilder extends ViewBuilder {
+class _SecondHeaderBuilder extends ViewBuilder {
   build(anocatRef, posts, viewConfig) {
     const thead = anocatRef.find_or_create_thead();
     const tr = document.createElement('tr');
@@ -244,7 +273,7 @@ class SecondHeaderBuilder extends ViewBuilder {
   }
 }
 
-class TableBodyBuilder extends ViewBuilder {
+class _TableBodyBuilder extends ViewBuilder {
   build(anocatRef, posts, viewConfig) {
     const tbody = anocatRef.find_or_create_tbody();
     const data = posts.data;
@@ -269,69 +298,98 @@ class TableBodyBuilder extends ViewBuilder {
   }
 }
 
-class BottomViewBuilder extends ViewBuilder {
+class _BottomViewBuilder extends ViewBuilder {
   build(anocatRef, posts, viewConfig) {
     const ref = anocatRef.get();
     ref.appendChild(this.wrap(viewConfig.renderer(posts), viewConfig.className));
   }
 }
-var decorator = new AnocatDecorator();
 
-decorator.firstHeader(2, (posts)=> {
-  const categoryString = posts['category'];
-  const num = posts['data'].length;
-  const h3 = document.createElement("h3");
-  h3.textContent = `${categoryString} 관련글 ${num}개`;
-  return h3;
-});
-
-decorator.secondHeader([1, 1], (posts,  i)=> {
-  const titles = ["제목", "작성일"];
-  const h3 = document.createElement("h3");
-  h3.textContent = titles[i];
-  return h3;
-});
-
-decorator.tableBody((posts, i, j)=> {
-  const post = posts.data[i];
-
-  if (j == 0) {
-    const a = document.createElement('a');
-    a.href = post.link;
-    a.textContent = post.title;
-    return a; 
+class _TestViewConfigHolder {
+  constructor() {
+    this.decorator = new AnocatDecorator();
+    this.decorator.firstHeader(2, (posts)=> {
+      const categoryString = posts['category'];
+      const num = posts['data'].length;
+      const h3 = document.createElement("h3");
+      h3.textContent = `${categoryString} 관련글 ${num}개`;
+      return h3;
+    })
+    .secondHeader([1, 1], (posts,  i)=> {
+      const titles = ["제목", "작성일"];
+      const h3 = document.createElement("h3");
+      h3.textContent = titles[i];
+      return h3;
+    })
+    .tableBody((posts, i, j)=> {
+      const post = posts.data[i];
+    
+      if (j == 0) {
+        const a = document.createElement('a');
+        a.href = post.link;
+        a.textContent = post.title;
+        return a; 
+      }
+      if (j == 1) {
+        const h5 = document.createElement('h5');
+        h5.textContent = post.date;
+        return h5;
+      }
+    })
+    .topView((posts)=> {
+      const div = document.createElement('div');
+      const prev = document.createElement('button');
+      const next = document.createElement('button');
+      const currentIndex = posts.currentIndex;
+      
+      prev.textContent = '최신 글';
+      if (currentIndex == 0) {
+        prev.disabled = true;
+      } else {
+        prev.onclick = ()=>{ location.href = posts.data[currentIndex - 1].link; }
+      }
+    
+      next.textContent = '이전 글';
+      if (currentIndex == posts.data.length - 1) {
+        next.disabled = true;
+      } else {
+        next.onclick = ()=>{ location.href = posts.data[currentIndex + 1].link; }
+      }
+    
+      div.appendChild(prev);
+      div.appendChild(next);
+      return div;
+    });
   }
-  if (j == 1) {
-    const h5 = document.createElement('h5');
-    h5.textContent = post.date;
-    return h5;
-  }
-});
 
-decorator.topView((posts)=> {
-  const div = document.createElement('div');
-  const prev = document.createElement('button');
-  const next = document.createElement('button');
-  const currentIndex = posts.currentIndex;
-  
-  prev.textContent = '최신 글';
-  if (currentIndex == 0) {
-    prev.disabled = true;
-  } else {
-    prev.onclick = ()=>{ location.href = posts.data[currentIndex - 1].link; }
+  getDecorator() {
+    return this.decorator;
+  }
+}
+
+class _VerticalCardViewConfigHolder {
+  constructor() {
+    this.decorator = new AnocatDecorator();
+    this.decorator.firstHeader(1, ()=>{});
+    this.decorator.secondHeader([1], ()=>{});
   }
 
-  next.textContent = '이전 글';
-  if (currentIndex == posts.data.length - 1) {
-    next.disabled = true;
-  } else {
-    next.onclick = ()=>{ location.href = posts.data[currentIndex + 1].link; }
+  getDecorator() {
+    return this.decorator;
+  }
+}
+
+class _HorizontalCardViewConfigHolder {
+  constructor() {
+    const width = this.decorator.posts.data.length;
+    this.decorator = new AnocatDecorator();
+    this.decorator.firstHeader(width, ()=>{});
+    this.decorator.secondHeader(new Array(width).fill(1), ()=>{});
   }
 
-  div.appendChild(prev);
-  div.appendChild(next);
-  return div;
-});
-
-
+  getDecorator() {
+    return this.decorator;
+  }
+}
+var decorator = AnocatDecorator.useLayout('test');
 decorator.commit();
