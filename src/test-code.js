@@ -105,7 +105,7 @@ class AnocatDecorator {
       const defaultColumnCount = this.viewConfig.secondHeader?.columnCount;
 
       if (defaultColumnCount) {
-        if (columnCount > defaultColumnCount) {
+        if (columnCount > defaultColumnCount || columnCount == -1) {
           columnCount = defaultColumnCount;
         }
       } else if (columnCount == -1) {
