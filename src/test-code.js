@@ -58,7 +58,7 @@ class AnocatDecorator {
       const builder = this.viewBuilder[key];
       const config = this.viewConfig[key];
       if (builder && config) {
-        builder.build(this.anocatRef, this.anocatPost, this.viewConfig[key]);
+        builder.build(this.anocatRef, this.anocatPost, config);
       }
     });
   }
@@ -105,7 +105,7 @@ class AnocatDecorator {
       const defaultColumnCount = this.viewConfig.secondHeader?.columnCount;
 
       if (defaultColumnCount) {
-        if (columnCount > defaultColumnCount) {
+        if (columnCount > defaultColumnCount || columnCount == -1) {
           columnCount = defaultColumnCount;
         }
       } else if (columnCount == -1) {
@@ -371,7 +371,7 @@ class _TestViewConfigHolder {
       h3.textContent = titles[i];
       return h3;
     })
-    .tableBody(-1, -1, (posts, i, j)=> {
+    .tableBody((posts, i, j)=> {
       const post = posts.data[i];
     
       if (j == 0) {
