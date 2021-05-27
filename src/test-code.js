@@ -43,6 +43,7 @@ class AnocatDecorator {
   commit() {
     this.trimReference();
     this.buildView();
+    return this;
   }
 
   trimReference() {
@@ -478,7 +479,7 @@ decorator.commit();
  * Test: Card-Vertical
  */
 
- var decorator = AnocatDecorator.useLayout('card-horizontal');
+ var decorator = AnocatDecorator.useLayout('card-vertical');
 
  decorator.tableBody((posts, i, j)=>{
    const post = posts.data[i];
@@ -509,3 +510,11 @@ decorator.tableBody((posts, i, j)=>{
 }, 10000, 10000);
 
 decorator.commit();
+
+/**
+ * Test: Card-Vertical, rowCount, columnCount ignored.
+ */
+
+var decorator = AnocatDecorator.useLayout('test');
+decorator.commit();
+

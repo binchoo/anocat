@@ -43,6 +43,7 @@ class AnocatDecorator {
   commit() {
     this.trimReference();
     this.buildView();
+    return this;
   }
 
   trimReference() {
