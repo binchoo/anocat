@@ -32,20 +32,13 @@ class AnocatDecorator {
   }
 
   commit() {
-    this.trimReference();
     this.buildView();
     return this;
   }
 
-  trimReference() {
-    const ref = this.anocatRef.get();
-    const h4s = ref.getElementsByTagName('h4');
-
-    for (let i = 0; i < h4s.length; i++)
-      h4s[i].remove();
-  }
-
   buildView() {
+    this.anocatRef.trimReference();
+    
     Object.keys(this.viewBuilder).forEach(key => {
       const builder = this.viewBuilder[key];
       const config = this.viewConfig[key];
@@ -141,6 +134,12 @@ class AnocatReference {
 
   get() {
     return this.reference;
+  }
+
+  trimReference() {
+    const h4s = this.reference.getElementsByTagName('h4');
+    for (let i = 0; i < h4s.length; i++)
+      h4s[i].remove();
   }
 
   select_category_a = function () {
