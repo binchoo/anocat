@@ -16,29 +16,20 @@ class AnocatDecorator {
   usesLayout = false;
 
   static useLayout(layout, reference = 'div.another_category') {
-    let decorator;
-    switch (layout) {
-      case 'card-vertical':
-        decorator = new _VerticalCardViewConfigHolder().getDecorator();
-        break;
-      case 'card-horizontal':
-        decorator = new _HorizontalCardViewConfigHolder().getDecorator();
-        break;
-      case 'test':
-      default:
-        decorator = new _TestViewConfigHolder().getDecorator();
-    }
-
-    decorator.anocatRef = new AnocatReference(reference);
+    const decorator = resolveLayout(layout).decorator
     decorator.usesLayout = true;
-
+    decorator.useReference(reference);
     return decorator;
   }
 
   constructor(reference = 'div.another_category') {
+    this.useReference(reference);
+  };
+
+  useReference(reference) {
     this.anocatRef = new AnocatReference(reference);
     this.anocatPost = AnocatPost.from(this.anocatRef);
-  };
+  }
 
   commit() {
     this.trimReference();
@@ -110,7 +101,7 @@ class AnocatDecorator {
           columnCount = defaultColumnCount;
         }
       } else if (columnCount == -1) {
-        console.exception('Required parameter: columnCount');
+        console.error('Required parameter: columnCount');
         return;
       }
   
@@ -356,7 +347,16 @@ class _BottomViewBuilder extends ViewBuilder {
   }
 }
 
-class _TestViewConfigHolder {
+const resolveLayout = (key)=>{
+    for (let i = 0; i < layoutHolders.length; i++) {
+      if (key == layoutHolders[i].key )
+        return new layoutHolders[i]();
+    }
+    console.error("No matched class for key:", key);
+}
+
+class TestLayoutHolder {
+  static key = 'test';
   constructor() {
     this.decorator = new AnocatDecorator();
     this.decorator.firstHeader(2, (posts)=> {
@@ -412,34 +412,29 @@ class _TestViewConfigHolder {
       return div;
     });
   }
-
-  getDecorator() {
-    return this.decorator;
-  }
 }
 
-class _VerticalCardViewConfigHolder {
+class VerticalCardLayoutHolder {
+  static key = 'card-vertical';
   constructor() {
     this.decorator = new AnocatDecorator();
     this.decorator.tableBody(null, this.decorator.anocatPost.length, 1);
   }
-
-  getDecorator() {
-    return this.decorator;
-  }
 }
 
-class _HorizontalCardViewConfigHolder {
+class HorizontalCardLayoutHolder {
+  static key = 'card-horizontal';
   constructor() {
     this.decorator = new AnocatDecorator();
     this.decorator.tableBody(null, 1, this.decorator.anocatPost.length);
   }
-
-  getDecorator() {
-    return this.decorator;
-  }
 }
-/**
+
+const layoutHolders = [
+  TestLayoutHolder,
+  VerticalCardLayoutHolder,
+  HorizontalCardLayoutHolder,
+];/**
  * Test: Card-Horizontal
  */
 
